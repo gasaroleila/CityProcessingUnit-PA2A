@@ -25,8 +25,16 @@ public class ShortestNextStretchFirst implements Policy {
 
     @Override
     public Trip pickNext(List<Trip> readyLine) {
-        // TODO
-        return null;
+        Trip best = readyLine.getFirst();
+        double bestEstimate = getEstimate(best);
+        for (int i = 1; i < readyLine.size(); i++) {
+            double estimate = getEstimate(readyLine.get(i));
+            if (estimate < bestEstimate) {
+                best = readyLine.get(i);
+                bestEstimate = estimate;
+            }
+        }
+        return best;
     }
 
     /**
@@ -36,7 +44,14 @@ public class ShortestNextStretchFirst implements Policy {
      * @return the estimate, or 0 if the trip has not been driven yet
      */
     public double getEstimate(Trip trip) {
-        // TODO
-        return 0;
+        double estimate = 0;
+        for (int t : trip.getStretchLengths()) {
+            if (estimate == 0) {
+                estimate = t;
+            } else {
+                estimate = alpha * estimate + (1 - alpha) * t;
+            }
+        }
+        return estimate;
     }
 }
